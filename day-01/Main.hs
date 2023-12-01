@@ -48,10 +48,7 @@ isDigit = (`BS.elem` digits)
 firstAndLastDigit :: ByteString -> Either ByteString (Int, Int)
 firstAndLastDigit bs = firstAndLastDigit' (Nothing, Nothing) $ BS.unpack bs
  where
-  firstAndLastDigit' (Nothing, l) (w : next) = case digitVal w of
-    Just v -> firstAndLastDigit' (Just v, l <|> pure v) next
-    Nothing -> firstAndLastDigit' (Nothing, l) next
-  firstAndLastDigit' (f, l) (w : next) = firstAndLastDigit' (f, digitVal w <|> l) next
+  firstAndLastDigit' (f, l) (w : next) = firstAndLastDigit' (f <|> digitVal w, digitVal w <|> l) next
   firstAndLastDigit' (Just f, Just l) [] = Right (f, l)
   firstAndLastDigit' _ _ = Left $ "Invalid input? " <> bs
 
