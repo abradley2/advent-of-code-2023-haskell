@@ -12,15 +12,7 @@ import Data.Text qualified as Text
 wordDigits :: [(Text, Text)]
 wordDigits =
   second (show :: Int -> Text)
-    <$> [ ("sevenine", 79)
-        , ("nineight", 98)
-        , ("eighthree", 83)
-        , ("eightwo", 82)
-        , ("twone", 21)
-        , ("threeight", 38)
-        , ("fiveight", 58)
-        , ("oneight", 18)
-        , ("one", 1)
+    <$> [ ("one", 1)
         , ("two", 2)
         , ("three", 3)
         , ("four", 4)
@@ -34,7 +26,8 @@ wordDigits =
 replaceWordDigits :: ByteString -> ByteString
 replaceWordDigits bs = encodeUtf8 $ Data.List.foldl reduce (decodeUtf8 bs) wordDigits
  where
-  reduce text (search, replace) = mconcat $ Data.List.intersperse replace $ Text.splitOn search text
+  reduce text (search, replace) = 
+    mconcat $ Data.List.intersperse (search <> replace <> search) $ Text.splitOn search text
 
 digits :: ByteString
 digits = "0123456789"
