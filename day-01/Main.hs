@@ -26,7 +26,7 @@ wordDigits =
 replaceWordDigits :: ByteString -> ByteString
 replaceWordDigits bs = encodeUtf8 $ Data.List.foldl reduce (decodeUtf8 bs) wordDigits
  where
-  reduce text (search, replace) = 
+  reduce text (search, replace) =
     mconcat $ Data.List.intersperse (search <> replace <> search) $ Text.splitOn search text
 
 digits :: ByteString
@@ -35,15 +35,12 @@ digits = "0123456789"
 digitVal :: Word8 -> Maybe Int
 digitVal w = BS.elemIndex w digits
 
-isDigit :: Word8 -> Bool
-isDigit = (`BS.elem` digits)
-
 firstAndLastDigit :: ByteString -> Either ByteString (Int, Int)
-firstAndLastDigit bs = firstAndLastDigit' (Nothing, Nothing) $ BS.unpack bs
+firstAndLastDigit bs = loop (Nothing, Nothing) $ BS.unpack bs
  where
-  firstAndLastDigit' (f, l) (w : next) = firstAndLastDigit' (f <|> digitVal w, digitVal w <|> l) next
-  firstAndLastDigit' (Just f, Just l) [] = Right (f, l)
-  firstAndLastDigit' _ _ = Left $ "Invalid input? " <> bs
+  loop (f, l) (w : next) = loop (f <|> digitVal w, digitVal w <|> l) next
+  loop (Just f, Just l) [] = Right (f, l)
+  loop _ _ = Left $ "Invalid input? " <> bs
 
 partOne :: [ByteString] -> ByteString
 partOne parsedInput =
